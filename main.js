@@ -1,37 +1,47 @@
-<!doctype html> 
-<html lang="en"> 
-<head> 
-	<meta charset="UTF-8" />
-	<title>Dialog System Sample - Yi</title>
-    <script src="phaser-ce-2.10.5/build/phaser.min.js"></script>
-    <style type="text/css">
-        body {
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
-
-<script type="text/javascript">
-
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-
-function preload() {
-
-    // game.load.image('sky', 'assets/sky.png');
-    // game.load.image('ground', 'assets/platform.png');
-    // game.load.image('star', 'assets/star.png');
-    // game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-
+function Main(game){
+    this.game=game;
 }
 
-function create() {
+// public functions
+Main.prototype.start=function(){
+
+    console.log("Main.start: game started at ("+this.game.width+","+this.game.height+").");
+
+    var dialog=new Dialog( 
+        {x:50, y:100, width:600}, // the geo of the dialog box
+        { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "left", boundsAlignV: "top" } // the style of the text
+    );
+
+    var controller=new DialogController(dialog);
+
+    controller.setList(
+        [
+            {        
+                text: "Testing sample text.... very very very very long long long long...   [Enter]", // the text you want to play
+                lettersPerSec: 50, // letters per second
+            },
+            {        
+                text: "Testing sample text... this is a slow one.   [Enter]", // the text you want to play
+                lettersPerSec: 20, // letters per second
+            },
+            {        
+                text: "Testing sample text... this is a very very very very fast one.   [Enter]", // the text you want to play
+                lettersPerSec: 150, // letters per second
+            }
+        ],
+        function(){console.log("all texts in the list has been played!")}
+    );
+
+    controller.playNext();
+
+    _setupKeys(controller);
 }
 
-function update() {
+// private functions
+function _setupKeys(controller){
+    enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+    enterKey.onUp.add(function(){
+        console.log("Enter pressed!");
+        this.playNext();
+    }, controller);
 }
-
-</script>
-
-</body>
-</html>
